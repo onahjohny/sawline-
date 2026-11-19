@@ -1,0 +1,386 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SAWLINE — I Saw It. I Report It. The World Knows.</title>
+<style>
+:root{--bg:#08090b;--panel:#111318;--panel2:#171a20;--text:#f5f7fa;--muted:#9ba3ae;--line:#272b33;--red:#e31b23;--yellow:#f4c400;--green:#36c275;--shadow:0 12px 40px rgba(0,0,0,.35)}
+[data-theme="light"]{--bg:#f5f6f8;--panel:#fff;--panel2:#eef0f3;--text:#111318;--muted:#5f6875;--line:#d8dce2;--shadow:0 12px 30px rgba(0,0,0,.09)}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+button,input,textarea{font:inherit}button{cursor:pointer}
+.top{position:sticky;top:0;z-index:50;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(16px);border-bottom:1px solid var(--line);height:70px;display:grid;grid-template-columns:70px 1fr 70px;align-items:center}
+.iconbtn{background:none;border:0;color:var(--text);font-size:25px;width:46px;height:46px;border-radius:50%}.iconbtn:hover{background:var(--panel2)}
+.brand{text-align:center;font-weight:900;letter-spacing:.08em;font-size:25px}.brand .saw{color:var(--red)}.brand .line{color:var(--text)}.tag{font-size:10px;letter-spacing:.06em;color:var(--muted);margin-top:2px}
+.nav{position:sticky;top:70px;z-index:45;display:flex;gap:7px;overflow-x:auto;white-space:nowrap;padding:10px 12px;background:var(--bg);border-bottom:1px solid var(--line);scrollbar-width:none}.nav::-webkit-scrollbar{display:none}.nav button{border:1px solid var(--line);background:var(--panel);color:var(--text);padding:10px 14px;border-radius:999px;font-weight:700}.nav button.active{background:var(--red);border-color:var(--red);color:#fff}
+main{max-width:900px;margin:auto;padding:24px 16px 90px}.hero{padding:35px 0 20px}.hero h1{font-size:clamp(38px,7vw,70px);line-height:.98;margin:0 0 16px;letter-spacing:-.05em}.hero p{color:var(--muted);font-size:17px;max-width:760px;line-height:1.6}.actions{display:flex;gap:12px;flex-wrap:wrap;margin:24px 0}.red,.yellow,.ghost{border:0;border-radius:12px;padding:13px 18px;font-weight:900}.red{background:var(--red);color:#fff}.yellow{background:var(--yellow);color:#151515}.ghost{background:var(--panel2);color:var(--text);border:1px solid var(--line)}
+section{scroll-margin-top:145px;margin:35px 0}.section-head{display:flex;align-items:end;justify-content:space-between;gap:10px;margin-bottom:13px}.section-head h2{font-size:26px;margin:0}.sub{color:var(--muted);font-size:14px}.composer{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:15px;box-shadow:var(--shadow);margin:14px 0}.composer textarea{width:100%;min-height:72px;resize:vertical;background:transparent;border:0;outline:0;color:var(--text);font-size:17px}.composer small{display:block;color:var(--muted);margin:4px 0 10px}.tools{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:10px}.toolrow{display:flex;gap:7px;flex-wrap:wrap}.pill{border:1px solid var(--line);background:var(--panel2);color:var(--text);border-radius:999px;padding:8px 11px}.post{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px;margin:11px 0}.posttop{display:flex;justify-content:space-between;gap:12px}.badge{font-size:11px;font-weight:900;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}.place{color:var(--red);font-weight:800}.post p{line-height:1.6;margin:10px 0}.meta{color:var(--muted);font-size:12px}.post-actions{display:flex;gap:8px;border-top:1px solid var(--line);padding-top:10px}.post-actions button{border:0;background:none;color:var(--muted);padding:6px 9px}.post-actions button:hover{color:var(--text)}
+#map{height:440px;border:1px solid var(--line);border-radius:18px;overflow:hidden;background:#101318;position:relative}.world{width:100%;height:100%;display:block}.country{fill:#252a32;stroke:#101318;stroke-width:1}.country.warn{fill:#8a7100}.country.war{fill:#8e171c}.legend{display:flex;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:13px;margin:12px 0}.dot{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:5px}.dred{background:var(--red)}.dyellow{background:var(--yellow)}.dnormal{background:#555c66}
+.drawer{position:fixed;inset:0;z-index:100;pointer-events:none}.shade{position:absolute;inset:0;background:rgba(0,0,0,.6);opacity:0;transition:.2s}.drawer.open{pointer-events:auto}.drawer.open .shade{opacity:1}.side{position:absolute;left:0;top:0;bottom:0;width:min(330px,88vw);background:var(--panel);border-right:1px solid var(--line);transform:translateX(-100%);transition:.25s;padding:20px;overflow:auto}.drawer.open .side{transform:none}.side h3{margin:0 0 20px}.side button{display:block;width:100%;text-align:left;background:none;border:0;color:var(--text);padding:13px 10px;border-radius:10px}.side button:hover{background:var(--panel2)}.side .danger{color:var(--red)}.overlay-page{display:none}.overlay-page.show{display:block}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px;margin:12px 0}.card h3{margin-top:0}.card li{margin:10px 0;line-height:1.5}.privacy{font-size:12px;color:var(--muted);background:var(--panel2);padding:10px;border-radius:10px}.check{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--muted)}.vote-choice{border:1px solid var(--line);background:var(--panel2);border-radius:12px;padding:12px;margin:8px 0;display:flex;justify-content:space-between}.bar{height:7px;background:var(--line);border-radius:99px;overflow:hidden;margin-top:6px}.bar i{display:block;height:100%;background:var(--yellow)}
+.theme{position:fixed;left:15px;bottom:15px;z-index:60;border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:999px;padding:11px 14px;box-shadow:var(--shadow);font-weight:800}
+.toast{position:fixed;bottom:75px;left:50%;transform:translateX(-50%) translateY(15px);opacity:0;z-index:200;background:var(--text);color:var(--bg);padding:11px 15px;border-radius:10px;transition:.2s;font-weight:700}.toast.show{opacity:1;transform:translateX(-50%)}
+@media(max-width:600px){.top{height:62px;grid-template-columns:58px 1fr 58px}.nav{top:62px}.hero{padding-top:22px}#map{height:330px}.brand{font-size:22px}.tools .red{width:100%}}
+
+.geo-map{width:100%;height:100%;min-height:440px;background:#101318}
+.leaflet-container{font:inherit;background:var(--bg)}
+.leaflet-control-zoom a{background:var(--panel)!important;color:var(--text)!important;border-color:var(--line)!important}
+.leaflet-control-attribution{background:color-mix(in srgb,var(--panel) 90%,transparent)!important;color:var(--muted)!important}
+.leaflet-control-attribution a{color:var(--muted)!important}
+.zone-dot{border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 2px rgba(0,0,0,.25)}
+@media(max-width:600px){.geo-map{min-height:330px}}
+
+.geo-map{filter:none}
+[data-theme="dark"] .geo-map{filter:brightness(.72) saturate(.72) contrast(1.08)}
+
+.view{display:none;min-height:70vh}.view.active-view{display:block}
+.vote-post .post-actions{gap:10px}
+.vote-post .post-actions button{border:1px solid var(--line);background:var(--panel2);border-radius:10px;color:var(--text);font-weight:800}
+.vote-post .post-actions button:hover{background:var(--panel)}
+
+/* SAWLINE v2 features */
+.post-meta{font-size:.78rem;opacity:.65;margin-top:3px}
+.trending-box,.app-banner,.profile-card,.admin-card,.premium-card,.advertise-card,.notification-card{border:1px solid var(--line);border-radius:16px;padding:16px;margin:14px 0;background:var(--card)}
+.trending-item{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}
+.trending-item:last-child{border-bottom:0}
+.badge{display:inline-block;padding:3px 8px;border-radius:999px;font-size:.7rem;font-weight:700;margin-left:6px}
+.badge.unverified{background:#6662}.badge.multi{background:#ffd40033;color:#8a6b00}.badge.confirmed{background:#e33b3b22;color:#c22}.badge.sponsored{background:#ffd40033;color:#8a6b00}
+.location-chip{border:1px solid var(--line);border-radius:999px;padding:5px 9px;margin:4px;font-size:.78rem}
+.ad-slot{border:1px dashed var(--line);border-radius:14px;padding:12px;margin:12px 0;text-align:center;font-size:.8rem}
+.notice{padding:10px 12px;border-radius:12px;background:#ffd40022;margin:10px 0;font-size:.85rem}
+
+</style>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+</head>
+<body data-theme="dark">
+<header class="top">
+<button class="iconbtn" aria-label="Open menu" onclick="openMenu()">☰</button>
+<div class="brand"><span class="saw">SAW</span><span class="line">LINE</span><div class="tag">I Saw It. I Report It. The World Knows.</div></div>
+<div></div>
+</header>
+
+<nav class="nav" id="nav">
+<button class="active" onclick="go('home')">Home</button><button onclick="go('mapsec')">Map</button><button onclick="go('live')">Live</button><button onclick="go('warning')">Warning</button><button onclick="go('vote')">Vote</button>
+</nav>
+
+<div class="drawer" id="drawer"><div class="shade" onclick="closeMenu()"></div><aside class="side">
+<h3>SAWLINE</h3>
+<div id="accountMenuItem"><button onclick="showPage('account')">👤 Create Account <span class="meta">Optional</span></button></div>
+<button onclick="showPage('how')">How It Works</button><button onclick="showPage('trust')">Why Trust SAWLINE</button><button onclick="showPage('rules')">Rules To Keep Everyone Safe</button><button onclick="showPage('settings')">Settings</button><button onclick="showPage('help')">Help</button><button onclick="showPage('advertise')">💰 Advertise on SAWLINE</button>
+      <button onclick="showPage('premium')">⭐ SAWLINE Premium</button>
+      <button onclick="showPage('notifications')">🔔 Notifications</button>
+      <button onclick="showPage('admin')">🛡️ Admin Dashboard <span class="meta">Prototype</span></button>
+      <button onclick="showPage('about')">About SAWLINE</button>
+<hr style="border:0;border-top:1px solid var(--line);margin:12px 0"><button onclick="closeMenu()">Close</button>
+</aside></div>
+
+<main>
+<div id="pages"></div>
+<div id="app">
+
+<section id="home" class="view active-view">
+<div class="hero"><h1>I Saw It.<br>I Report It.<br>The World Knows.</h1><p>SAWLINE is not TV news. It is real people in war reporting what they saw and what happened to them. No politicians. No lies. Just witnesses. And here, nobody knows who you are, so you can finally tell the truth.</p>
+<div class="actions"><button class="red" onclick="focusComposer()">I SAW IT</button><button class="yellow" onclick="focusComposer()">I NEED TO SAY THIS</button></div></div>
+<div class="section-head"><h2>Write A Report</h2><span class="sub">Anonymous by design</span></div>
+<div id="trendingBox" class="trending-box"><h3>🔥 Trending Now</h3><div id="trendingList"></div></div>
+<div class="app-banner"><h3>📱 SAWLINE App</h3><p class="small">Use SAWLINE on the app for faster reporting, Live alerts and notifications.</p><button class="red" onclick="showPage('app')">Get the App</button></div>
+<div class="profile-card"><h3>📍 Follow Locations</h3><p class="small">Suggestions automatically follow the map: 🔴 active conflict and 🟡 warning locations appear here. Your saved follows stay even if a location later becomes normal.</p><div id="followChips"></div></div>
+<div class="composer" id="composer-home"><textarea id="text-home" placeholder="Write A Report... What did you see?"></textarea><small>What did you see? Where? When? You may also share something that happened to you in war that you cannot say in public.</small><div class="tools"><div class="toolrow"><button class="pill" onclick="attachDemo()">📎 Photo / Video</button><button class="pill" onclick="attachDemo()">🎙 Voice</button><label class="check"><input type="checkbox" checked> Stay Completely Anonymous</label></div><button class="red" onclick="post('home')">Post Anonymously</button></div><div class="privacy">Safety note: this front-end demo stores posts only in this browser. A real deployment must use privacy-preserving infrastructure and must not promise anonymity unless the server, hosting, analytics, media storage and moderation systems are designed for it.</div></div>
+<div id="home-feed"></div>
+</section>
+
+<section id="mapsec" class="view">
+<div class="section-head"><h2>Map</h2><span class="sub">People-powered signals</span></div>
+<div id="map"><div id="geoMap" class="geo-map" aria-label="Geographic world map showing SAWLINE report zones"></div></div>
+<div class="legend"><span><i class="dot dred"></i>Red means war is happening now.</span><span><i class="dot dyellow"></i>Yellow means warning, war might start soon.</span><span><i class="dot dnormal"></i>Normal means peaceful.</span></div>
+<p class="sub">The map changes when people report. In a real deployment, location should be generalized rather than exposing an exact home or device location.</p>
+<div id="map-feed"></div>
+</section>
+
+<section id="live" class="view">
+<div class="section-head"><h2>Live — I Saw It Now</h2></div>
+<div class="composer"><textarea id="text-live" placeholder="Write What Is Happening Now..."></textarea><div class="tools"><span class="sub">Post only what is safe to share.</span><button class="red" onclick="post('live')">Post Anonymously</button></div></div>
+<div id="live-feed"></div>
+</section>
+
+<section id="warning" class="view">
+<div class="section-head"><h2>Warning — I Saw The Signs</h2></div>
+<p class="sub">War does not start in one day. People see signs first. Food prices go up. Soldiers move. Schools close. SAWLINE shows the warning so the world can act before it is too late.</p>
+<div class="composer"><textarea id="text-warning" placeholder="Write A Warning... What signs did you see?"></textarea><div class="tools"><div class="toolrow"><button class="pill" onclick="attachDemo()">📎 Photo</button><button class="pill" onclick="attachDemo()">🎙 Voice</button></div><button class="yellow" onclick="post('warning')">Post Warning Anonymously</button></div></div>
+<div id="warning-feed"></div>
+</section>
+
+<section id="vote" class="view">
+<div class="section-head"><h2>Vote — I Saw What People Want</h2></div>
+<div class="composer"><textarea id="vote-q" placeholder="Make Your Own Vote... Ask a question."></textarea><input id="vote-a" placeholder="Choice 1" style="width:100%;margin:8px 0;padding:11px;border-radius:10px;border:1px solid var(--line);background:var(--panel2);color:var(--text)"><input id="vote-b" placeholder="Choice 2" style="width:100%;margin:8px 0;padding:11px;border-radius:10px;border:1px solid var(--line);background:var(--panel2);color:var(--text)"><button class="yellow" onclick="postVote()">Post Vote Anonymously</button></div>
+<div id="vote-feed"></div>
+</section>
+
+</div>
+</main>
+
+<button class="theme" id="themeBtn" onclick="toggleTheme()">☾ Dark</button><div class="toast" id="toast"></div>
+
+<script>
+const samples=[
+{place:"Sudan",text:"I saw an explosion near the market. People were running in every direction and trying to get away.",kind:"Report",time:"12 min ago",reacts:42,confirms:18},
+{place:"Gaza",text:"I saw families leaving their homes with only bags. Some were carrying children and water.",kind:"Report",time:"24 min ago",reacts:67,confirms:31},
+{place:"Nigeria",text:"I saw soldiers gathering near our area, and food prices doubled in one day.",kind:"Report",time:"41 min ago",reacts:29,confirms:12}
+];
+
+const warnings=[
+{place:"Nigeria",text:"Food prices went up sharply in our area. People are queuing longer for basic food.",kind:"Warning",time:"18 min ago",reacts:22},
+{place:"Lebanon",text:"People are queuing for bread and some shops are running low.",kind:"Warning",time:"36 min ago",reacts:35},
+{place:"Ethiopia",text:"Families are moving away from villages near the border because they are afraid of fighting.",kind:"Warning",time:"52 min ago",reacts:19}
+];
+let userPosts=JSON.parse(localStorage.getItem("sawline_posts")||"[]");
+
+function go(id){
+ document.querySelectorAll(".view").forEach(v=>v.classList.remove("active-view"));
+ const target=document.getElementById(id);
+ if(target) target.classList.add("active-view");
+ document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("active",b.getAttribute("onclick")?.includes("'"+id+"'")));
+ if(id==="mapsec"){setTimeout(()=>{if(geoMap)geoMap.invalidateSize();else drawMarkers()},50)}
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+function openMenu(){document.getElementById("drawer").classList.add("open")}function closeMenu(){document.getElementById("drawer").classList.remove("open")}
+function focusComposer(){document.getElementById("composer-home").scrollIntoView({behavior:"smooth"});setTimeout(()=>document.getElementById("text-home").focus(),500)}
+function toast(s){let t=document.getElementById("toast");t.textContent=s;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2200)}
+function attachDemo(){toast("Attachment controls are ready for a real deployment.")}
+function post(type){
+ const map={home:"text-home",live:"text-live",warning:"text-warning"};let el=document.getElementById(map[type]);if(!el?.value.trim()){toast("Write something first.");return}
+ let p={place:"Anonymous location",text:el.value.trim(),kind:type==="warning"?"Warning":type==="stories"?"Story":"Report",time:"just now",reacts:0,confirms:0,user:true};userPosts.unshift(p);localStorage.setItem("sawline_posts",JSON.stringify(userPosts));el.value="";render();toast("Posted anonymously on this device.");}
+function renderPost(p,i){
+ return `<article class="post"><div class="posttop"><div><span class="badge">${p.kind}</span> · <span class="place">${p.place}</span></div><span class="meta">${p.time}</span></div><p>${esc(p.text)}</p><div class="post-actions"><button onclick="react(${i})">👍🏻 ${p.reacts||0}</button><button onclick="comment()">Comment</button><button onclick="confirmPost(${i})">Confirm · ${p.confirms||0}</button></div></article>`;
+}
+function feed(arr,id){document.getElementById(id).innerHTML=arr.map((p,i)=>renderPost(p,i)).join("")}
+function render(){let all=[...userPosts,...samples];feed(all,"home-feed");feed(all,"live-feed");feed([...userPosts.filter(x=>x.kind==="Warning"),...warnings],"warning-feed");drawMarkers()}
+function react(i){toast("React recorded anonymously.");}
+function comment(){let c=prompt("Write an anonymous comment:");if(c?.trim())toast("Anonymous comment added.");}
+function confirmPost(i){toast("Confirmation recorded anonymously.");}
+let votes=[
+ {q:"What do the people want?",a:"I Want Peace Talks Now",b:"I Want More Fighting",ap:78,bp:22},
+];
+function voteCard(v){
+ const total=(v.ap||0)+(v.bp||0)||1, pa=Math.round((v.ap||0)/total*100), pb=100-pa;
+ return `<article class="post vote-post"><div class="posttop"><span class="badge">Vote</span><span class="meta">Anonymous</span></div><p><b>${esc(v.q)}</b></p><div class="vote-choice"><span>${esc(v.a)}</span><b>${pa}%</b></div><div class="bar"><i style="width:${pa}%"></i></div><div class="vote-choice"><span>${esc(v.b)}</span><b>${pb}%</b></div><div class="bar"><i style="width:${pb}%"></i></div><div class="post-actions"><button onclick="castVote()">⬆ Up vote</button><button onclick="castVote()">⬇ Down vote</button></div></article>`;
+}
+function renderVotes(){document.getElementById("vote-feed").innerHTML=votes.map(v=>voteCard(v)).join("");}
+function castVote(){toast("Your anonymous vote was recorded.");}
+function postVote(){
+ let q=document.getElementById("vote-q").value.trim(),a=document.getElementById("vote-a").value.trim(),b=document.getElementById("vote-b").value.trim();
+ if(!q||!a||!b){toast("Add a question and two choices.");return}
+ votes.unshift({q,a,b,ap:0,bp:0,author:currentNickname(),ts:Date.now()});
+ document.getElementById("vote-q").value="";document.getElementById("vote-a").value="";document.getElementById("vote-b").value="";
+ renderVotes();toast("Vote posted anonymously.");
+}
+let geoMap=null, geoLayers=[];
+const zones=[
+ {name:"Sudan",lat:15.5,lng:30.2,type:"war",count:7},
+ {name:"Gaza",lat:31.45,lng:34.38,type:"war",count:8},
+ {name:"Ukraine",lat:49.0,lng:31.2,type:"war",count:6},
+ {name:"Myanmar",lat:21.0,lng:96.0,type:"war",count:6},
+ {name:"DR Congo",lat:-2.9,lng:23.7,type:"war",count:5},
+ {name:"Nigeria",lat:9.1,lng:8.7,type:"warn",count:3},
+ {name:"Ethiopia",lat:9.1,lng:40.5,type:"warn",count:3},
+ {name:"Lebanon",lat:33.9,lng:35.8,type:"warn",count:2},
+ {name:"Venezuela",lat:7.0,lng:-66.0,type:"warn",count:2},
+ {name:"Ghana",lat:7.9,lng:-1.0,type:"normal",count:0},
+ {name:"Kenya",lat:0.2,lng:37.9,type:"normal",count:0},
+ {name:"France",lat:46.2,lng:2.2,type:"normal",count:0},
+ {name:"Brazil",lat:-10.8,lng:-51.9,type:"normal",count:0},
+ {name:"India",lat:22.6,lng:79.0,type:"normal",count:0},
+ {name:"Canada",lat:56.1,lng:-106.3,type:"normal",count:0}
+];
+function mapTiles(){
+ return "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
+}
+function drawMarkers(){
+ if(!geoMap){
+   geoMap=L.map("geoMap",{minZoom:2,maxZoom:7,worldCopyJump:true,zoomControl:true}).setView([15,10],2);
+ }
+ geoLayers.forEach(x=>geoMap.removeLayer(x)); geoLayers=[];
+ L.tileLayer(mapTiles(),{maxZoom:7,attribution:'© OpenStreetMap contributors'}).addTo(geoMap);
+ zones.forEach(z=>{
+   const color=z.type==="war"?"#e31b23":z.type==="warn"?"#f4c400":"#6b7280";
+   const radius=z.type==="war"?10:z.type==="warn"?8:5;
+   const marker=L.circleMarker([z.lat,z.lng],{
+     radius, color:"#fff", weight:2, fillColor:color, fillOpacity:.92
+   }).addTo(geoMap);
+   marker.bindPopup(`<b>${z.name}</b><br>${z.type==="war"?"War reported now":z.type==="warn"?"Warning signs reported":"Normal / peaceful"}<br><span style="color:var(--muted)">${z.count} sample signals</span>`);
+   geoLayers.push(marker);
+ });
+ setTimeout(()=>geoMap.invalidateSize(),100);
+}
+
+function esc(s){return s.replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
+function toggleTheme(){let dark=document.body.getAttribute("data-theme")==="dark";document.body.setAttribute("data-theme",dark?"light":"dark");document.getElementById("themeBtn").textContent=dark?"☀ Light":"☾ Dark";localStorage.setItem("sawline_theme",dark?"light":"dark");if(geoMap) drawMarkers()}
+if(localStorage.getItem("sawline_theme")==="light"){document.body.setAttribute("data-theme","light");document.getElementById("themeBtn").textContent="☀ Light"}
+
+
+function getAccount(){
+  try{
+    return JSON.parse(localStorage.getItem("sawline_account") || "null");
+  }catch(e){
+    return null;
+  }
+}
+
+function renderAccountMenu(){
+  const box = document.getElementById("accountMenuItem");
+  if(!box) return;
+  const account = getAccount();
+
+  if(account && account.nickname){
+    box.innerHTML = `
+      <button onclick="showPage('account')">
+        👤 ${escapeHtml(account.nickname)} <span class="meta">Account</span>
+      </button>
+    `;
+  }else{
+    box.innerHTML = `
+      <button onclick="showPage('account')">
+        👤 Create Account <span class="meta">Optional</span>
+      </button>
+    `;
+  }
+}
+
+function escapeHtml(value){
+  return String(value).replace(/[&<>"']/g, function(ch){
+    return ({
+      "&":"&amp;",
+      "<":"&lt;",
+      ">":"&gt;",
+      '"':"&quot;",
+      "'":"&#039;"
+    })[ch];
+  });
+}
+
+
+function createAccount(){
+  const input = document.getElementById("nicknameInput");
+  const nickname = (input?.value || "").trim();
+
+  if(nickname.length < 3){
+    toast("Choose a nickname with at least 3 characters.");
+    return;
+  }
+  if(nickname.length > 20){
+    toast("Nickname must be 20 characters or less.");
+    return;
+  }
+
+  localStorage.setItem("sawline_account", JSON.stringify({nickname}));
+  renderAccountMenu();
+  toast("Anonymous account created.");
+  showPage("account");
+}
+
+function logoutAccount(){
+  localStorage.removeItem("sawline_account");
+  renderAccountMenu();
+  toast("Logged out. You can still use SAWLINE anonymously.");
+  closeMenu();
+}
+
+
+function timeAgo(ts){
+  const d=Math.max(0,Date.now()-Number(ts||Date.now())),s=Math.floor(d/1000);
+  if(s<60)return s<6?"just now":s+"s ago";
+  const m=Math.floor(s/60);if(m<60)return m+" min ago";
+  const h=Math.floor(m/60);if(h<24)return h+" hr ago";
+  const day=Math.floor(h/24);if(day===1)return "Yesterday";
+  if(day<7)return day+" days ago";return new Date(ts).toLocaleDateString();
+}
+function currentNickname(){const a=getAccount();return a&&a.nickname?"@"+a.nickname:"Anonymous Witness";}
+function statusBadge(s){return s==="confirmed"?'<span class="badge confirmed">Confirmed</span>':s==="multi"?'<span class="badge multi">Multiple witnesses</span>':'<span class="badge unverified">Unverified</span>';}
+function addConfirmation(id){
+  const ps=JSON.parse(localStorage.getItem("sawline_posts")||"[]"),p=ps.find(x=>x.id===id);if(!p)return;
+  p.confirmations=(p.confirmations||0)+1;p.status=p.confirmations>=5?"confirmed":p.confirmations>=2?"multi":"unverified";
+  localStorage.setItem("sawline_posts",JSON.stringify(ps));render();renderTrending();toast("Your confirmation was recorded anonymously.");
+}
+function reportPost(id){
+  const reason=prompt("Why are you reporting this post?");if(!reason)return;
+  const r=JSON.parse(localStorage.getItem("sawline_moderation")||"[]");r.push({postId:id,reason,ts:Date.now()});
+  localStorage.setItem("sawline_moderation",JSON.stringify(r));toast("Report sent to moderation.");
+}
+function toggleFollow(x){
+  let a=JSON.parse(localStorage.getItem("sawline_following")||"[]");a=a.includes(x)?a.filter(v=>v!==x):a.concat(x);
+  localStorage.setItem("sawline_following",JSON.stringify(a));renderFollowLocations();
+}
+function renderFollowLocations(){
+  const b=document.getElementById("followChips");if(!b)return;
+  const f=JSON.parse(localStorage.getItem("sawline_following")||"[]");
+
+  // Follow suggestions come directly from the map's current zone status.
+  // Red/war and yellow/warn locations are suggested automatically.
+  const active=zones.filter(z=>z.type==="war"||z.type==="warn");
+  const activeNames=new Set(active.map(z=>z.name));
+
+  let html=active.map(z=>{
+    const followed=f.includes(z.name);
+    const label=z.type==="war"?"🔴 Active conflict":"🟡 Warning";
+    return `<button class="location-chip" onclick="toggleFollow('${z.name}')">${followed?"✓ ":""}${z.name}<br><small>${label}</small></button>`;
+  }).join("");
+
+  // A user can keep following a place even after it becomes normal.
+  const savedNormal=f.filter(name=>!activeNames.has(name));
+  if(savedNormal.length){
+    html+=`<div class="small" style="margin-top:10px">Still following:</div>`;
+    html+=savedNormal.map(name=>`<button class="location-chip" onclick="toggleFollow('${name}')">✓ ${name}<br><small>🟢 Current map status</small></button>`).join("");
+  }
+
+  b.innerHTML=html||'<div class="notice">No red or yellow locations are currently listed.</div>';
+}
+function renderTrending(){
+  const b=document.getElementById("trendingList");if(!b)return;
+  const p=JSON.parse(localStorage.getItem("sawline_posts")||"[]"),c={};
+  p.forEach(x=>{const k=x.location||x.region||"Global";c[k]=(c[k]||0)+(x.confirmations||0)+(x.reactions||0)});
+  const a=Object.entries(c).sort((x,y)=>y[1]-x[1]),d=[["Sudan",342],["Gaza",218],["Nigeria",156]];
+  d.forEach(x=>{if(!a.some(y=>y[0]===x[0]))a.push(x)});
+  b.innerHTML=a.slice(0,5).map(x=>`<div class="trending-item"><span>🔥 ${escapeHtml(x[0])}</span><b>${x[1]} attention</b></div>`).join("");
+}
+function createAd(){
+  const company=(document.getElementById("adCompany")?.value||"").trim(),title=(document.getElementById("adTitle")?.value||"").trim(),placement=document.getElementById("adPlacement")?.value||"feed";
+  if(!company||!title)return toast("Enter the company and advertisement title.");
+  const a=JSON.parse(localStorage.getItem("sawline_ads")||"[]");a.unshift({id:Date.now(),company,title,placement,status:"pending",ts:Date.now()});
+  localStorage.setItem("sawline_ads",JSON.stringify(a));toast("Advertisement submitted for review.");showPage("advertise");
+}
+function approveAd(id){
+  const a=JSON.parse(localStorage.getItem("sawline_ads")||"[]"),x=a.find(v=>v.id===id);if(!x)return;
+  x.status="active";localStorage.setItem("sawline_ads",JSON.stringify(a));toast("Advertisement approved.");showPage("admin");
+}
+function renderAdSlot(place){
+  if(localStorage.getItem("sawline_premium")==="true")return "";
+  const a=JSON.parse(localStorage.getItem("sawline_ads")||"[]").find(x=>x.status==="active"&&x.placement===place);
+  return a?`<div class="ad-slot"><span class="badge sponsored">ADVERTISEMENT</span><br><b>${escapeHtml(a.company)}</b><br>${escapeHtml(a.title)}</div>`:"";
+}
+function togglePremium(){
+  const on=localStorage.getItem("sawline_premium")==="true";localStorage.setItem("sawline_premium",String(!on));
+  toast(!on?"Premium ad-free mode enabled in this prototype.":"Premium ad-free mode disabled.");showPage("premium");
+}
+
+function showPage(type){
+ closeMenu();let pages={
+account:["Create Account","An account is optional. For this demo, use only a nickname such as Witness123. Never use a real name or contact information.","Your nickname: <input placeholder='Witness123' style='padding:10px;width:100%;margin-top:8px;background:var(--panel2);border:1px solid var(--line);color:var(--text);border-radius:9px'><button class='red' style='margin-top:10px' onclick='toast(\"Optional nickname saved locally.\")'>Create Optional Account</button>"],
+how:["How It Works","",`<ol><li>You see it.</li><li>You report it, no account, no name.</li><li>Other people near you Confirm if they saw it too.</li><li>The whole world knows and the map changes.</li></ol>`],
+trust:["Why Trust SAWLINE","",`<ol><li><b>Completely Anonymous.</b> Nobody knows anyone.</li><li><b>Real Witnesses Only.</b> Reports can include photo, video, or voice proof if it is safe to share.</li><li><b>No Politics.</b> We do not take sides. We show what people say they saw.</li></ol>`],
+rules:["Rules To Keep Everyone Safe","",`<ol><li>Do not write the real name of another person.</li><li>Do not write your exact location or house address.</li><li>Do not write phone numbers or contacts.</li><li>Do not show faces in photos or videos. SAWLINE should blur faces automatically in a real deployment.</li></ol><p class='privacy'>Stay safe first. Do not upload anything that could identify or endanger you or another person.</p>`],
+settings:["Settings","",`<button class='ghost' onclick='toggleTheme()'>Toggle light / dark theme</button>`],
+help:["Help","",`<p>If you are in immediate danger, move to safety first. SAWLINE is not an emergency service. Do not use it to coordinate attacks or expose someone's identity.</p>`],
+about:["About SAWLINE","",`<p>SAWLINE is a concept for anonymous witness reporting during war and crisis. This prototype demonstrates the interface locally in your browser.</p>`]
+};
+let x=pages[type];document.getElementById("pages").innerHTML=`<section class="overlay-page show"><button class="ghost" onclick="document.getElementById('pages').innerHTML=''">← Back</button><div class="card"><h2>${x[0]}</h2>${x[1]?`<p>${x[1]}</p>`:""}${x[2]}</div></section>`;window.scrollTo({top:0,behavior:"smooth"})
+}
+renderAccountMenu();render();renderVotes();renderTrending();renderFollowLocations();go("home");
+</script>
+<footer style="border-top:1px solid var(--line);padding:30px 16px;color:var(--muted);text-align:center">
+<strong style="color:var(--text)">SAWLINE — I Saw It. I Report It. The World Knows.</strong><br><br>
+SAWLINE protects witnesses. Never share your exact location if it is dangerous. If you are in danger, run first, report later. Stay safe first. If you need help now, talk to a trusted health worker or aid worker near you.
+</footer>
+</body>
+</html>
