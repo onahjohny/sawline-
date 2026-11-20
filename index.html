@@ -125,13 +125,12 @@ section{scroll-margin-top:145px;margin:35px 0}.section-head{display:flex;align-i
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const SUPABASE_URL = "https://dodhyzsyruqlnndoewni.supabase.co/rest/v1/";
+const SUPABASE_URL = "https://dodhyzsyruqlnndoewni.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_zPrcUjQVqgV7yy90OqnBtA_fY_EToTx";
 
-const supabase = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_PUBLISHABLE_KEY
-);
+const supabase = window.supabase?.createClient
+  ? window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY)
+  : null;
 const samples=[
 {place:"Sudan",text:"I saw an explosion near the market. People were running in every direction and trying to get away.",kind:"Report",time:"12 min ago",reacts:42,confirms:18},
 {place:"Gaza",text:"I saw families leaving their homes with only bags. Some were carrying children and water.",kind:"Report",time:"24 min ago",reacts:67,confirms:31},
@@ -206,6 +205,7 @@ function mapTiles(){
  return "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
 }
 function drawMarkers(){
+if(typeof L === "undefined") return;
  if(!geoMap){
    geoMap=L.map("geoMap",{minZoom:2,maxZoom:7,worldCopyJump:true,zoomControl:true}).setView([15,10],2);
  }
