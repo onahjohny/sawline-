@@ -123,7 +123,15 @@ section{scroll-margin-top:145px;margin:35px 0}.section-head{display:flex;align-i
 
 <button class="theme" id="themeBtn" onclick="toggleTheme()">☾ Dark</button><div class="toast" id="toast"></div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+const SUPABASE_URL = "https://dodhyzsyruqlnndoewni.supabase.co/rest/v1/";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_zPrcUjQVqgV7yy90OqnBtA_fY_EToTx";
+
+const supabase = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_PUBLISHABLE_KEY
+);
 const samples=[
 {place:"Sudan",text:"I saw an explosion near the market. People were running in every direction and trying to get away.",kind:"Report",time:"12 min ago",reacts:42,confirms:18},
 {place:"Gaza",text:"I saw families leaving their homes with only bags. Some were carrying children and water.",kind:"Report",time:"24 min ago",reacts:67,confirms:31},
