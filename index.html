@@ -128,7 +128,7 @@ section{scroll-margin-top:145px;margin:35px 0}.section-head{display:flex;align-i
 const SUPABASE_URL = "https://dodhyzsyruqlnndoewni.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_zPrcUjQVqgV7yy90OqnBtA_fY_EToTx";
 
-const supabase = window.supabase?.createClient
+const supabaseClient = window.supabase?.createClient
   ? window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY)
   : null;
 const samples=[
