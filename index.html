@@ -156,9 +156,54 @@ function openMenu(){document.getElementById("drawer").classList.add("open")}func
 function focusComposer(){document.getElementById("composer-home").scrollIntoView({behavior:"smooth"});setTimeout(()=>document.getElementById("text-home").focus(),500)}
 function toast(s){let t=document.getElementById("toast");t.textContent=s;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2200)}
 function attachDemo(){toast("Attachment controls are ready for a real deployment.")}
-function post(type){
- const map={home:"text-home",live:"text-live",warning:"text-warning"};let el=document.getElementById(map[type]);if(!el?.value.trim()){toast("Write something first.");return}
- let p={place:"Anonymous location",text:el.value.trim(),kind:type==="warning"?"Warning":type==="stories"?"Story":"Report",time:"just now",reacts:0,confirms:0,user:true};userPosts.unshift(p);localStorage.setItem("sawline_posts",JSON.stringify(userPosts));el.value="";render();toast("Posted anonymously on this device.");}
+async function post(type){
+ const map={home:"text-home",live:"text-live",warning:"text-warning"};
+ const el=document.getElementById(map[type]);
+
+ if(!el || !el.value.trim()){
+   toast("Write something first.");
+   return;
+ }
+
+ if(!supabaseClient){
+   toast("Database connection unavailable.");
+   return;
+ }
+
+ const description=el.value.trim();
+
+ const {error}=await supabaseClient
+   .from("reports")
+   .insert([{
+     category:type,
+     title:type==="warning"?"Warning":"Witness Report",
+     description:description,
+     location:null
+   }]);
+
+ if(error){
+   console.error(error);
+   toast("Report could not be submitted.");
+   return;
+ }
+
+ let p={
+   place:"Anonymous location",
+   text:description,
+   kind:type==="warning"?"Warning":"Report",
+   time:"just now",
+   reacts:0,
+   confirms:0,
+   user:true
+ };
+
+ userPosts.unshift(p);
+ localStorage.setItem("sawline_posts",JSON.stringify(userPosts));
+
+ el.value="";
+ render();
+ toast("Report saved successfully.");
+                            }
 function renderPost(p,i){
  return `<article class="post"><div class="posttop"><div><span class="badge">${p.kind}</span> · <span class="place">${p.place}</span></div><span class="meta">${p.time}</span></div><p>${esc(p.text)}</p><div class="post-actions"><button onclick="react(${i})">👍🏻 ${p.reacts||0}</button><button onclick="comment()">Comment</button><button onclick="confirmPost(${i})">Confirm · ${p.confirms||0}</button></div></article>`;
 }
