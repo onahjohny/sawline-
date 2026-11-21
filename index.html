@@ -203,7 +203,7 @@ async function post(type){
  el.value="";
  render();
  toast("Report saved successfully.");
-                            }
+}
 function renderPost(p,i){
  return `<article class="post"><div class="posttop"><div><span class="badge">${p.kind}</span> · <span class="place">${p.place}</span></div><span class="meta">${p.time}</span></div><p>${esc(p.text)}</p><div class="post-actions"><button onclick="react(${i})">👍🏻 ${p.reacts||0}</button><button onclick="comment()">Comment</button><button onclick="confirmPost(${i})">Confirm · ${p.confirms||0}</button></div></article>`;
 }
